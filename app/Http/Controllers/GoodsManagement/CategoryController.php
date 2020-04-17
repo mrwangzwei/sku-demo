@@ -21,13 +21,13 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
-//        $id = $request->input('id', 0);
+        $id = $request->input('id', 0);
         $category = GoodsCategory::query()->select('id', 'name', 'tiny_img', 'pid')->with([
             "hasChild" => function ($query) {
                 $query->select('id', 'name', 'tiny_img', 'pid');
             }
         ])
-//            ->where('pid', $id)
+            ->where('pid', $id)
             ->get()->toArray();
         return ResponseHelper::success([
             'category' => $category

@@ -14,9 +14,9 @@ class RedisHelper
     {
         if (!self::$connect) {
             $redis = new \Redis();
-            $redis->connect(env('REDIS0_HOST', '127.0.0.1'), env('REDIS0_PORT', 6379));
-            $redis->auth(env('REDIS0_PASSWORD', null));
-            $redis->select(env('REDIS0_DB', 0));
+            $redis->connect(env('REDIS_HOST', '127.0.0.1'), env('REDIS_PORT', 6379));
+            $redis->auth(env('REDIS_PASSWORD', null));
+            $redis->select(env('REDIS_DB', 0));
             self::$connect = $redis;
         }
         return self::$connect;

@@ -30,7 +30,7 @@ class GoodsController extends Controller
     public function store(Request $request)
     {
         $requestLimit = RedisHelper::requestLimitPass("goods-store");
-        if(!$requestLimit)
+        if (!$requestLimit)
             return ResponseHelper::fail(ResponseHelper::ERROR_CODE, "超速了");
         $param = $request->all();
         $v = Validator::make($param, [
@@ -79,7 +79,7 @@ class GoodsController extends Controller
     public function update($gid, Request $request)
     {
         $requestLimit = RedisHelper::requestLimitPass("goods-update");
-        if(!$requestLimit)
+        if (!$requestLimit)
             return ResponseHelper::fail(ResponseHelper::ERROR_CODE, "超速了");
         $param = $request->all();
         $v = Validator::make($param, [
@@ -222,7 +222,7 @@ class GoodsController extends Controller
     public function switch($gid)
     {
         $requestLimit = RedisHelper::requestLimitPass("goods-switch");
-        if(!$requestLimit)
+        if (!$requestLimit)
             return ResponseHelper::fail(ResponseHelper::ERROR_CODE, "超速了");
         $goodsInfo = GoodsInfo::query()->where('id', $gid)->where('deleted_at', 0)->first();
         if (!$goodsInfo)
@@ -236,6 +236,12 @@ class GoodsController extends Controller
                 ->pluck('cid')->toArray();
         //更新类目商品列表缓存
         GoodsList::batchCategoryGoodsListCache($gid, $switch, $categoryIds);
+        if ($switch == 1) {
+            \App\Modules\Goods\Cache\GoodsInfo::saveGoodsDetail($gid);
+        } else {
+            \App\Modules\Goods\Cache\GoodsInfo::saveGoodsDetailCache($gid, 0);
+            \App\Modules\Goods\Cache\GoodsInfo::saveGoodsMainInfoCache($gid, 0);
+        }
         return ResponseHelper::success([
             'switch' => $switch
         ]);

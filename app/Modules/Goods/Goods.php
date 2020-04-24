@@ -152,6 +152,7 @@ class Goods
         }
         //清详情缓存
         \App\Modules\Goods\Cache\GoodsInfo::saveGoodsDetailCache($gid, 0);
+        \App\Modules\Goods\Cache\GoodsInfo::saveGoodsMainInfoCache($gid, 0);
         //清类目商品列表缓存
         GoodsList::batchCategoryGoodsListCache($gid, 0, $delCategoryIds);
 

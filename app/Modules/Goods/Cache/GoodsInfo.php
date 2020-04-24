@@ -20,10 +20,11 @@ class GoodsInfo
             ->where('id', $gid)
             ->first()
             ->toArray();
-        empty($goodsInfo['banner_imgs']) && $goodsInfo['banner_imgs'] = explode(',', $goodsInfo['banner_imgs']);
-        empty($goodsInfo['banner_video']) && $goodsInfo['banner_video'] = explode(',', $goodsInfo['banner_video']);
+        !empty($goodsInfo['banner_imgs']) && $goodsInfo['banner_imgs'] = explode(',', $goodsInfo['banner_imgs']);
+        !empty($goodsInfo['banner_video']) && $goodsInfo['banner_video'] = explode(',', $goodsInfo['banner_video']);
         $goodsInfo['max_price'] = bcdiv($goodsInfo['max_price'], 100, 2);
         $goodsInfo['min_price'] = bcdiv($goodsInfo['min_price'], 100, 2);
+        $goodsMainInfo = $goodsInfo;
         //获取商品的规格信息
         $goodsInfo['spec_info'] = Spec::getGoodsSpecInfo($gid);
         //获取sku信息
@@ -33,6 +34,7 @@ class GoodsInfo
         unset($goodsInfo['updated_at']);
         unset($goodsInfo['deleted_at']);
         self::saveGoodsDetailCache($gid, 1, $goodsInfo);
+        self::saveGoodsMainInfoCache($gid, 1, $goodsMainInfo);
         return true;
     }
 
@@ -40,6 +42,13 @@ class GoodsInfo
     {
         $switch == 1 && RedisHelper::connect()->hSet(Rediskey::GOODS_DETAIL, $gid, json_encode($detail, JSON_UNESCAPED_UNICODE));
         $switch == 0 && RedisHelper::connect()->hDel(Rediskey::GOODS_DETAIL, $gid);
+        return true;
+    }
+
+    public static function saveGoodsMainInfoCache($gid, $switch = 1, $detail = [])
+    {
+        $switch == 1 && RedisHelper::connect()->hSet(Rediskey::GOODS_MAIN_INFO, $gid, json_encode($detail, JSON_UNESCAPED_UNICODE));
+        $switch == 0 && RedisHelper::connect()->hDel(Rediskey::GOODS_MAIN_INFO, $gid);
         return true;
     }
 }

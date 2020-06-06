@@ -24,6 +24,7 @@ class Test extends Command
 
     public function handle()
     {
+        date_default_timezone_set('PRC');
 
         $filePath = dirname(dirname(dirname(dirname(__FILE__)))) . "/public/eee.xlsx";
         $newFilePath = dirname(dirname(dirname(dirname(__FILE__)))) . "/storage/logs/eee2.xlsx";
@@ -34,7 +35,7 @@ class Test extends Command
         foreach ($data[0] as $item) {
             $orderGoods = json_decode($item[32], 1);
             $extInfo = json_decode($item[33], 1);
-            $code = explode('、', $extInfo[0]['content']);
+            $code = explode('、', $extInfo[0]['content']??'');
             $newDatas[] = [
                 "goods_name" => $orderGoods[0]['goods_name'],
                 "spec" => $orderGoods[0]['spec_values'],
@@ -51,7 +52,7 @@ class Test extends Command
                 "ship" => "",
                 "ship_no" => "",
                 "code_no" => count($code),
-                "code" => $extInfo[0]['content'],
+                "code" => $extInfo[0]['content'] ?? '',
             ];
         }
         $head = ['商品名称', '规格', '购买数量', '商品金额', '实付款金额', '付款时间', '收件人姓名', '收件人手机号', '所在地址', '详细收货地址', '订单备注', '订单号', '物流商家', '快递单号', "核销码数量", "核销码"];
